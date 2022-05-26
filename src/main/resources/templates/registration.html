@@ -6,24 +6,29 @@
 </head>
 <body>
 
-<div>
+<div align="center">
     <form th:action="@{/registration}" method="POST" th:object="${user}" >
-        <h2>Registration</h2>
-        <div>
+        <h2>REGISTRATION</h2>
+        <p>
             <input type="text" id="username" name="username" placeholder="Username"
                         autofocus="true"/>
-        </div>
-        <div>
+        </p>
+        <p>
             <input type="password" id="password" name="password" placeholder="Password"/>
-        </div>
-        <div>
+        </p>
+        <p>
             <input type="email" id="email" name="email" placeholder="Email"/>
-        </div>
+        </p>
 
         <input type="submit" value="Sing In">
+
     </form>
-    <a href="/">Main page</a>
+    <br>
+    <a href="/">MAIN PAGE</a>
+    <br>
+    <h4><a href="/logout">LOGOUT</a></h4>
 </div>
-<h4><a href="/logout">Logout</a></h4>
+
+
 </body>
 </html>

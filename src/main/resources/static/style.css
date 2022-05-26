@@ -1,0 +1,43 @@
+h2 {
+    font-family: Baskerville;
+    color: #5B5941;
+    letter-spacing: 2px;
+}
+h4 a{
+    font-family: Baskerville;
+    color: #5B5941;
+}
+.container {
+    margin-top: 100px;
+    width: 800px;
+    height: 50vh;
+}
+table{
+    border: 1px solid #eee;
+    margin-bottom: 20px;
+}
+table th {
+    font-family: Baskerville;
+    font-weight: bold;
+    padding: 5px;
+    background: #87B6A7;
+    border: 1px solid #dddddd;
+}
+table td{
+    padding: 5px 10px;
+    border: 1px solid #eee;
+    text-align: left;
+    font-family: Roboto, sans-serif;
+    font-weight: 300;
+}
+table tbody tr:nth-child(odd){
+    background: #F7D08A;
+}
+table tbody tr:nth-child(even){
+    background: #E3F09B;
+}
+label {
+    font-family: Baskerville;
+    font-weight: 700;
+    color: #87B6A7;
+}

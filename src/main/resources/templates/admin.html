@@ -2,13 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link href="../static/style.css" th:href="@{/style.css}" rel="stylesheet"/>
     <title>Admin</title>
 </head>
 <body>
 <div align="center" th:switch="${users}">
     <h2 th:case="null">No users!</h2>
     <div th:case="*">
-        <h2>Customers</h2>
+        <h2>Users</h2>
         <p><a href="/user-create">Add User</a></p>
         <table border="1" cellpadding="5">
             <thead>
