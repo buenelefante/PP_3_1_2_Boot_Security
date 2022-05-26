@@ -7,14 +7,17 @@
 <body>
 
 <div>
-    <form th:action="@{/registration}" method="POST" >
+    <form th:action="@{/registration}" method="POST" th:object="${user}" >
         <h2>Registration</h2>
         <div>
-            <input type="text" path="username" placeholder="Username"
+            <input type="text" id="username" name="username" placeholder="Username"
                         autofocus="true"/>
         </div>
         <div>
-            <input type="password" path="password" placeholder="Password"/>
+            <input type="password" id="password" name="password" placeholder="Password"/>
+        </div>
+        <div>
+            <input type="email" id="email" name="email" placeholder="Email"/>
         </div>
 
         <input type="submit" value="Sing In">

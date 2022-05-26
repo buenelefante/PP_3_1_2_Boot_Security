@@ -4,10 +4,41 @@
     <title>User page</title>
 </head>
 <body>
-<h1>User, welcome spring boot security page!</h1>
-<form th:action="@{/logout}" method="post">
-    <input type="submit" value="Sign Out"/>
-</form>
+<h1>User, welcome!</h1>
+
+<div align="center" th:switch="${users}">
+    <div th:case="*">
+        <h2>User</h2>
+
+        <table border="1" cellpadding="5">
+            <thead>
+            <tr>
+
+                <th>NAME</th>
+                <th>EMAIL</th>
+                <th>PASSWORD</th>
+                <th>ROLE</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user: ${users}">
+
+                <td th:text="${user.username}">username</td>
+                <td th:text="${user.email}">email</td>
+                <td th:text="${user.password}">password</td>
+
+
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <br>
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" value="Sign Out"/>
+    </form>
+
+</div>
 
 </body>
 </html>

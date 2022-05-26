@@ -5,6 +5,44 @@
     <title>Admin</title>
 </head>
 <body>
-Hello admin
+<div align="center" th:switch="${users}">
+    <h2 th:case="null">No users!</h2>
+    <div th:case="*">
+        <h2>Customers</h2>
+        <p><a href="/user-create">Add User</a></p>
+        <table border="1" cellpadding="5">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>NAME</th>
+                <th>EMAIL</th>
+                <th>PASSWORD</th>
+                <th>ROLE</th>
+                <th>ACTIONS</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user: ${users}">
+                <td th:text="${user.id}">id</td>
+                <td th:text="${user.username}">username</td>
+                <td th:text="${user.email}">email</td>
+                <td th:text="${user.password}">password</td>
+                <td th:each="role : ${user.roles}">
+                    <span th:text="${role.name}"></span>
+                </td>
+                <td><a th:href="@{user-update/{id}(id=${user.id})}">Edit</a>
+                    &nbsp;&nbsp;
+                    <a th:href="@{user-delete/{id}(id=${user.id})}">Delete</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <br>
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" value="Sign Out"/>
+    </form>
+
+</div>
 </body>
 </html>
