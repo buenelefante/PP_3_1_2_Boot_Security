@@ -2,28 +2,31 @@ package ru.kata.spring.boot_security.demo.entity;
 
 import org.springframework.security.core.GrantedAuthority;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import java.util.Set;
 
 @Entity
-@Table(name = "l_role")
 public class Role implements GrantedAuthority {
     @Id
+    //@GeneratedValue
     private Long id;
-    private String name;
-    @Transient
+    private String roleName;
+
+//    @Transient
     @ManyToMany(mappedBy = "roles")
     private Set<User> users;
-    public Role() {
-    }
 
-    public Role(Long id) {
-        this.id = id;
-    }
+    public Role() {}
 
-    public Role(Long id, String name) {
-        this.id = id;
-        this.name = name;
+    public Role(String roleName) {
+        if (roleName.contains("ADMIN")) {
+            this.id = 1L;
+        } else if (roleName.contains("USER")) {
+            this.id = 2L;
+        }
+        this.roleName = roleName;
     }
 
     public Long getId() {
@@ -34,24 +37,22 @@ public class Role implements GrantedAuthority {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getRoleName() {
+        return roleName;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Set<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<User> users) {
-        this.users = users;
+    public void setRoleName(String role) {
+        this.roleName = role;
     }
 
     @Override
     public String getAuthority() {
-        return getName();
+        return roleName;
     }
+
+    @Override
+    public String toString() {
+        return roleName;
+    }
+
 }

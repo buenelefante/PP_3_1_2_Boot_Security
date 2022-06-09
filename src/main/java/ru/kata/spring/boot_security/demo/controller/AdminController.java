@@ -1,76 +1,61 @@
 package ru.kata.spring.boot_security.demo.controller;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import ru.kata.spring.boot_security.demo.entity.User;
-import ru.kata.spring.boot_security.demo.service.UserService;
 
-import java.util.List;
+import ru.kata.spring.boot_security.demo.service.RoleServiceImpl;
+import ru.kata.spring.boot_security.demo.service.UserServiceImpl;
 
 @Controller
 public class AdminController {
     @Autowired
-    private UserService userService;
+    private final UserServiceImpl userServiceImpl;
+    @Autowired
+    private final RoleServiceImpl roleServiceImpl;
 
-    public AdminController(UserService userService) {
-        this.userService = userService;
+    public AdminController (UserServiceImpl userServiceImpl,
+                            RoleServiceImpl roleServiceImpl) {
+        this.userServiceImpl = userServiceImpl;
+        this.roleServiceImpl = roleServiceImpl;
     }
+
     @GetMapping("/admin")
-    public String userList(Model model) {
-        List<User> users = userService.allUsers();
-        model.addAttribute("users", users);
+    public String getAdminPage(Model model) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        model.addAttribute("authorizedUser", userDetails);
+        model.addAttribute("newUser", new User());
+        model.addAttribute("users", userServiceImpl.getAllUsers());
+        model.addAttribute("allRoles", roleServiceImpl.getAllRoles());
         return "admin";
     }
 
-    @GetMapping("user-create")
-    public String createUserForm(User user) {
-        return "user-create";
-    }
-
-    @PostMapping("/user-create")
-    public String createUser(User user) {
-       userService.saveUser(user);
+    @PostMapping("/create")
+    public String createUser(@ModelAttribute User newUser) {
+        userServiceImpl.createUser(newUser);
         return "redirect:/admin";
     }
 
-    @GetMapping("user-delete/{id}")
-    public String deleteUser(@PathVariable("id") Long id) {
-        userService.deleteUser(id);
+    @PostMapping("/update")
+    public String updateUser(@ModelAttribute User editUser) {
+        userServiceImpl.updateUser(editUser);
         return "redirect:/admin";
     }
 
-    @GetMapping("user-update/{id}")
-    public String updateUserForm(@PathVariable("id") Long id, Model model) {
-        User user = userService.findUserById(id);
-        model.addAttribute("user", user);
-        return "/user-update";
-    }
-
-    @PostMapping("/user-update")
-    public String updateUser(User user) {
-        userService.saveUser(user);
+    @PostMapping("/delete/{id}")
+    public String deleteUser(@PathVariable("id") long id) {
+        User user = userServiceImpl.getUserById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
+        userServiceImpl.deleteUser(user);
         return "redirect:/admin";
     }
 
-
-
-//    @PostMapping("/admin")
-//    public String  deleteUser(@RequestParam(required = true, defaultValue = "" ) Long userId,
-//                              @RequestParam(required = true, defaultValue = "" ) String action,
-//                              Model model) {
-//        if (action.equals("delete")){
-//            userService.deleteUser(userId);
-//        }
-//        return "redirect:/admin";
-//    }
-//
-//    @GetMapping("/admin/gt/{userId}")
-//    public String  gtUser(@PathVariable("userId") Long userId, Model model) {
-//        model.addAttribute("allUsers", userService.usergtList(userId));
-//        return "admin";
-//    }
 }
