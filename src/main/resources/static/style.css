@@ -8,7 +8,8 @@ h4 a{
     color: #5B5941;
 }
 .container {
-    margin-top: 100px;
+    margin: 100px auto;
+   text-align: center;
     width: 800px;
     height: 50vh;
 }
@@ -42,3 +43,6 @@ label {
     color: #87B6A7;
 }
 
+p a {
+    cursor: pointer;
+}

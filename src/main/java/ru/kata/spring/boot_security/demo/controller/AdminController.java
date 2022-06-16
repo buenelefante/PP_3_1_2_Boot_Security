@@ -2,60 +2,73 @@ package ru.kata.spring.boot_security.demo.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.entity.User;
+import ru.kata.spring.boot_security.demo.service.RoleService;
+import ru.kata.spring.boot_security.demo.service.UserService;
 
-import ru.kata.spring.boot_security.demo.service.RoleServiceImpl;
-import ru.kata.spring.boot_security.demo.service.UserServiceImpl;
+import javax.annotation.PostConstruct;
 
 @Controller
 public class AdminController {
-    @Autowired
-    private final UserServiceImpl userServiceImpl;
-    @Autowired
-    private final RoleServiceImpl roleServiceImpl;
+    private UserService userService;
+    private RoleService roleService;
 
-    public AdminController (UserServiceImpl userServiceImpl,
-                            RoleServiceImpl roleServiceImpl) {
-        this.userServiceImpl = userServiceImpl;
-        this.roleServiceImpl = roleServiceImpl;
+    @Autowired
+    public AdminController(UserService userService, RoleService roleService) {
+        this.userService = userService;
+        this.roleService = roleService;
+    }
+
+
+    @PostConstruct
+    public void addTestUsers(){
+        userService.saveUser(new User("admin", "admin", "admin@gmail.com", "admin", roleService.getRoleByName("ROLE_ADMIN")));
+        userService.saveUser(new User("user", "user", "user@gmail.com", "user",roleService.getRoleByName("ROLE_USER")));
     }
 
     @GetMapping("/admin")
-    public String getAdminPage(Model model) {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        model.addAttribute("authorizedUser", userDetails);
-        model.addAttribute("newUser", new User());
-        model.addAttribute("users", userServiceImpl.getAllUsers());
-        model.addAttribute("allRoles", roleServiceImpl.getAllRoles());
-        return "admin";
+    public String adminPage(Model model) {
+        model.addAttribute("users", userService.getAll());
+        return "/admin";
+    }
+
+    @GetMapping("/create")
+    public String createUserForm(@ModelAttribute("user") User user, Model model) {
+        model.addAttribute("roles", roleService.getAllRoles());
+        return "/create";
     }
 
     @PostMapping("/create")
-    public String createUser(@ModelAttribute User newUser) {
-        userServiceImpl.createUser(newUser);
+    public String createUser(@ModelAttribute("user") User user,
+                             @RequestParam(value = "nameRoles", required = false) String roles) {
+        user.setUserRoles(roleService.getRoleByName(roles));
+        userService.saveUser(user);
         return "redirect:/admin";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteUser(@PathVariable("id") Long id) {
+        userService.deletedById(id);
+        return "redirect:/admin";
+    }
+
+
+    @GetMapping("/update/{id}")
+    public String updateUserForm(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("user", userService.findById(id));
+        model.addAttribute("roles", roleService.getAllRoles());
+        return "/update";
     }
 
     @PostMapping("/update")
-    public String updateUser(@ModelAttribute User editUser) {
-        userServiceImpl.updateUser(editUser);
+    public String updateUser(@ModelAttribute("user") User user,
+                             @RequestParam(value = "nameRoles", required = false) String roles) {
+        user.setUserRoles(roleService.getRoleByName(roles));
+        userService.saveUser(user);
         return "redirect:/admin";
     }
-
-    @PostMapping("/delete/{id}")
-    public String deleteUser(@PathVariable("id") long id) {
-        User user = userServiceImpl.getUserById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
-        userServiceImpl.deleteUser(user);
-        return "redirect:/admin";
-    }
-
 }
